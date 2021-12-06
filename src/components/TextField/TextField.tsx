@@ -1,10 +1,10 @@
-import React, { ChangeEventHandler, Dispatch, SetStateAction, useState } from "react";
+import { ChangeEventHandler } from "react";
 import "./TextField.css";
 
 type TextFieldProps = {
   inputName: string;
   fieldName: string;
-  name: string;
+  value: string;
   onChange: ChangeEventHandler<HTMLInputElement>
   error: boolean | string;
   disabled: boolean;
@@ -15,7 +15,7 @@ const TextField = ({
   disabled,
   inputName,
   fieldName,
-  name,
+  value,
   onChange,
   error,
   type,
@@ -30,7 +30,7 @@ const TextField = ({
         name={inputName}
         autoComplete="off"
         type={type}
-        value={name}
+        value={value}
         onChange={onChange}
       />
       {{ error } && (

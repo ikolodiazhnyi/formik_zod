@@ -43,7 +43,7 @@ export const SignUp: React.FC = () => {
           ).error.issues.pop().message
         );
       } else {
-        setConfirmError(false as any);
+        setConfirmError(false);
       }
     } else if (
       !(validate.shape as any)[targetName].safeParse(targetValue).success
@@ -72,7 +72,7 @@ export const SignUp: React.FC = () => {
           inputName="name"
           type="text"
           fieldName="Nickname:"
-          name={name}
+          value={name}
           onChange={(e) => onChange(e, setName, setNameError)}
           error={nameError}
           disabled={false}
@@ -81,7 +81,7 @@ export const SignUp: React.FC = () => {
           inputName="email"
           type="email"
           fieldName="Email:"
-          name={email}
+          value={email}
           onChange={(e) => onChange(e, setEmail, setEmailError)}
           error={emailError}
           disabled={false}
@@ -90,7 +90,7 @@ export const SignUp: React.FC = () => {
           inputName="password"
           type="password"
           fieldName="Password:"
-          name={password}
+          value={password}
           onChange={(e) => onChange(e, setPassword, setPasswordError)}
           error={passwordError}
           disabled={false}
@@ -99,7 +99,7 @@ export const SignUp: React.FC = () => {
           inputName="confirm"
           type="password"
           fieldName="Confirm Password:"
-          name={confirm}
+          value={confirm}
           onChange={(e) => onChange(e, setConfirm, setConfirmError)}
           error={confirmError}
           disabled={passwordError || !password.length ? true : false}
