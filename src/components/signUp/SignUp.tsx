@@ -3,7 +3,7 @@ import "./SignUp.css";
 import { validate } from "../Validator";
 import TextField from "../TextField/TextField";
 
-export const SignUp:React.FC = () => {
+export const SignUp: React.FC = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,11 +20,6 @@ export const SignUp:React.FC = () => {
       | React.Dispatch<React.SetStateAction<boolean>>
       | React.Dispatch<React.SetStateAction<string>>
   ) => {
-    /*
-    to do
-    make switch
-    */
-
     const targetName = e.target.name;
     const targetValue = e.target.value;
     setState(targetValue);
@@ -64,11 +59,11 @@ export const SignUp:React.FC = () => {
   };
 
   const onResetHandler = () => {
-    setName('')
-    setEmail('')
-    setPassword('')
-    setConfirm('')
-  }
+    setName("");
+    setEmail("");
+    setPassword("");
+    setConfirm("");
+  };
   return (
     <div className="form-wrapper">
       <form onReset={onResetHandler}>
@@ -80,8 +75,6 @@ export const SignUp:React.FC = () => {
           name={name}
           onChange={(e) => onChange(e, setName, setNameError)}
           error={nameError}
-          setState={setName}
-          setErrorState={setNameError}
           disabled={false}
         />
         <TextField
@@ -91,8 +84,6 @@ export const SignUp:React.FC = () => {
           name={email}
           onChange={(e) => onChange(e, setEmail, setEmailError)}
           error={emailError}
-          setState={setEmail}
-          setErrorState={setEmailError}
           disabled={false}
         />
         <TextField
@@ -102,8 +93,6 @@ export const SignUp:React.FC = () => {
           name={password}
           onChange={(e) => onChange(e, setPassword, setPasswordError)}
           error={passwordError}
-          setState={setPassword}
-          setErrorState={setPasswordError}
           disabled={false}
         />
         <TextField
@@ -113,8 +102,6 @@ export const SignUp:React.FC = () => {
           name={confirm}
           onChange={(e) => onChange(e, setConfirm, setConfirmError)}
           error={confirmError}
-          setState={setConfirm}
-          setErrorState={setConfirmError}
           disabled={passwordError || !password.length ? true : false}
         />
         <button className="btn btn-dark mt-3" type={"submit"}>
