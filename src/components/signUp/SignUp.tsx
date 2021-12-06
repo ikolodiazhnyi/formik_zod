@@ -12,7 +12,6 @@ export const SignUp:React.FC = () => {
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [confirmError, setConfirmError] = useState(false);
-  const [isDisableConfirm, setIsDisableConfirm] = useState(true);
 
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement>,
