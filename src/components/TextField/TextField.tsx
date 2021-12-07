@@ -1,14 +1,15 @@
-import { ChangeEventHandler } from "react";
+import { ChangeEventHandler, FocusEventHandler } from "react";
 import "./TextField.css";
 
 type TextFieldProps = {
   inputName: string;
   fieldName: string;
   value: string;
-  onChange: ChangeEventHandler<HTMLInputElement>
+  onChange: ChangeEventHandler<HTMLInputElement>;
   error: boolean | string;
-  disabled: boolean;
+  disabled?: boolean;
   type: string;
+  onBlur: FocusEventHandler<HTMLInputElement>;
 };
 
 const TextField = ({
@@ -17,6 +18,7 @@ const TextField = ({
   fieldName,
   value,
   onChange,
+  onBlur,
   error,
   type,
 }: TextFieldProps) => {
@@ -32,6 +34,7 @@ const TextField = ({
         type={type}
         value={value}
         onChange={onChange}
+        onBlur={onBlur}
       />
       {{ error } && (
         <div style={{ color: "darkred", whiteSpace: "pre" }}>{error}</div>

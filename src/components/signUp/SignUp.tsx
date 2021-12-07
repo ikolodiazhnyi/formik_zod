@@ -1,28 +1,33 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useState } from "react";
 import "./SignUp.css";
 import { validate } from "../Validator";
 import TextField from "../TextField/TextField";
 
 export const SignUp: React.FC = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [nameError, setNameError] = useState(false);
-  const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-  const [confirmError, setConfirmError] = useState(false);
+  /*
+    multi select
+    +переделать state
+    checkboxes
+    +переделать onChange
+    +сделать onBlur
+  */
+  const [values, setValues] = useState({
+    name: "",
+    email: "",
+    confirm: "",
+    password: "",
+    checkboxes: [],
+    nameError: false,
+    emailError: false,
+    confirmError: false,
+    passwordError: false,
+    checkboxesError: false,
+  });
 
-  const onChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setState: React.Dispatch<React.SetStateAction<string>>,
-    setErrorState:
-      | React.Dispatch<React.SetStateAction<boolean>>
-      | React.Dispatch<React.SetStateAction<string>>
-  ) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const targetName = e.target.name;
     const targetValue = e.target.value;
-    setState(targetValue);
+
     if (targetName === "confirm") {
       const checkPasswords = validate
         .pick({ password: true, confirm: true })
@@ -31,38 +36,71 @@ export const SignUp: React.FC = () => {
           path: ["confirm"],
         });
       if (
-        !checkPasswords.safeParse({ password: password, confirm: targetValue })
-          .success
+        !checkPasswords.safeParse({
+          password: values.password,
+          confirm: targetValue,
+        }).success
       ) {
-        setConfirmError(
-          (
+        setValues({
+          ...values,
+          [targetName]: targetValue,
+          confirmError: (
             checkPasswords.safeParse({
-              password: password,
+              password: values.password,
               confirm: targetValue,
             }) as any
-          ).error.issues.pop().message
-        );
+          ).error.issues
+            .map((item: any) => item.message)
+            .join(", "),
+        });
       } else {
-        setConfirmError(false);
+        setValues({
+          ...values,
+          [targetName]: targetValue,
+          confirmError: false,
+        });
       }
     } else if (
       !(validate.shape as any)[targetName].safeParse(targetValue).success
     ) {
-      setErrorState(
-        (validate.shape as any)[targetName]
+      setValues({
+        ...values,
+        [targetName]: targetValue,
+        [`${targetName}Error`]: (validate.shape as any)[targetName]
           .safeParse(targetValue)
-          .error.issues.pop().message
-      );
+          .error.issues.map((item: any) => item.message)
+          .join(", "),
+      });
     } else {
-      setErrorState(false as any);
+      setValues({
+        ...values,
+        [targetName]: targetValue,
+        [`${targetName}Error`]: false,
+      });
+    }
+  };
+
+  const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const targetName: string = e.target.name;
+    if ((values as any)[targetName] === "") {
+      setValues({
+        ...values,
+        [`${targetName}Error`]: "Required",
+      });
     }
   };
 
   const onResetHandler = () => {
-    setName("");
-    setEmail("");
-    setPassword("");
-    setConfirm("");
+    setValues({
+      ...values,
+      name: "",
+      email: "",
+      password: "",
+      confirm: "",
+    });
+  };
+
+  const onCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   };
   return (
     <div className="form-wrapper">
@@ -72,38 +110,73 @@ export const SignUp: React.FC = () => {
           inputName="name"
           type="text"
           fieldName="Nickname:"
-          value={name}
-          onChange={(e) => onChange(e, setName, setNameError)}
-          error={nameError}
+          value={values.name}
+          onChange={onChange}
+          onBlur={onBlur}
+          error={values.nameError}
           disabled={false}
         />
         <TextField
           inputName="email"
           type="email"
           fieldName="Email:"
-          value={email}
-          onChange={(e) => onChange(e, setEmail, setEmailError)}
-          error={emailError}
+          value={values.email}
+          onChange={onChange}
+          onBlur={onBlur}
+          error={values.emailError}
           disabled={false}
         />
         <TextField
           inputName="password"
           type="password"
           fieldName="Password:"
-          value={password}
-          onChange={(e) => onChange(e, setPassword, setPasswordError)}
-          error={passwordError}
+          value={values.password}
+          onChange={onChange}
+          onBlur={onBlur}
+          error={values.passwordError}
           disabled={false}
         />
         <TextField
           inputName="confirm"
           type="password"
           fieldName="Confirm Password:"
-          value={confirm}
-          onChange={(e) => onChange(e, setConfirm, setConfirmError)}
-          error={confirmError}
-          disabled={passwordError || !password.length ? true : false}
+          value={values.confirm}
+          onChange={onChange}
+          onBlur={onBlur}
+          error={values.confirmError}
+          disabled={
+            values.passwordError || !values.password.length ? true : false
+          }
         />
+        <h4>How are you doing?</h4>
+        <div>
+          <label htmlFor="first">Sick</label>
+          <input
+            type="checkbox"
+            name="first"
+            onChange={onCheckboxChange}
+            value="sick"
+          />
+          <label htmlFor="second">Fine</label>
+          <input
+            type="checkbox"
+            name="second"
+            onChange={onCheckboxChange}
+            value="fine"
+          />
+          <label htmlFor="third">Awesome</label>
+          <input
+            type="checkbox"
+            name="third"
+            onChange={onCheckboxChange}
+            value="awesome"
+          />
+          {values.checkboxesError && (
+            <div style={{ color: "darkred", whiteSpace: "pre" }}>
+              {values.checkboxesError}
+            </div>
+          )}
+        </div>
         <button className="btn btn-dark mt-3" type={"submit"}>
           Register
         </button>
