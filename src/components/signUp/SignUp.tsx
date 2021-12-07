@@ -1,24 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./SignUp.css";
 import { validate } from "../Validator";
 import TextField from "../TextField/TextField";
 
 export const SignUp: React.FC = () => {
-  /*
-    multi select
-    +переделать state
-    checkboxes
-    +переделать onChange
-    +сделать onBlur
-  */
   const [values, setValues] = useState({
     name: "",
     email: "",
     confirm: "",
     password: "",
+    select: [] as string[],
     checkboxes: [] as string[],
     nameError: "",
     emailError: "",
+    selectError: "",
     confirmError: "",
     passwordError: "",
     checkboxesError: "",
@@ -101,13 +96,25 @@ export const SignUp: React.FC = () => {
   };
 
   const onCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
-      values.checkboxes.push(e.target.value);
-      console.log(values.checkboxes);
+    let checked = e.target.checked;
+    let value = e.target.value;
+    if (checked) {
+      setValues({
+        ...values,
+        checkboxes: [...values.checkboxes, value],
+      });
     } else if (!e.target.checked) {
       const index = values.checkboxes.indexOf(e.target.value);
-      values.checkboxes.splice(index, 1);
+      const localCheckboxes = values.checkboxes;
+      localCheckboxes.splice(index, 1);
+      setValues({
+        ...values,
+        checkboxes: [...localCheckboxes],
+      });
     }
+  };
+
+  useEffect(() => {
     if (!values.checkboxes.length) {
       setValues({
         ...values,
@@ -119,7 +126,31 @@ export const SignUp: React.FC = () => {
         checkboxesError: "",
       });
     }
+  }, [values.checkboxes]);
+
+  const onSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    let selected = Array.from(
+      e.target.selectedOptions,
+      (option) => option.value
+    );
+    setValues({
+      ...values,
+      select: selected,
+    });
   };
+  useEffect(() => {
+    if (values.select.length < 2) {
+      setValues({
+        ...values,
+        selectError: "Minimum 2 options must be marked",
+      });
+    } else if (values.select.length) {
+      setValues({
+        ...values,
+        selectError: "",
+      });
+    }
+  }, [values.select]);
   return (
     <div className="form-wrapper">
       <form onReset={onResetHandler}>
@@ -195,8 +226,28 @@ export const SignUp: React.FC = () => {
             </div>
           )}
         </div>
+        <div>
+          <label htmlFor="color">Choose colors:</label>
+          <select name="color" multiple={true} onChange={onSelectChange}>
+            <option value="white">White</option>
+            <option value="dark">Dark</option>
+            <option value="red">Red</option>
+          </select>
+          {values.selectError && (
+            <div style={{ color: "darkred", whiteSpace: "pre" }}>
+              {values.selectError}
+            </div>
+          )}
+        </div>
+
         <button
-          disabled={values.checkboxesError || !values.checkboxes.length ? true : false}
+          disabled={
+            values.checkboxesError ||
+            values.selectError ||
+            !values.checkboxes.length
+              ? true
+              : false
+          }
           className={
             values.checkboxesError || !values.checkboxes.length
               ? "btn btn-dark mt-3 disabled-input"
