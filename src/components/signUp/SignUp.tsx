@@ -16,12 +16,12 @@ export const SignUp: React.FC = () => {
     email: "",
     confirm: "",
     password: "",
-    checkboxes: [],
-    nameError: false,
-    emailError: false,
-    confirmError: false,
-    passwordError: false,
-    checkboxesError: false,
+    checkboxes: [] as string[],
+    nameError: "",
+    emailError: "",
+    confirmError: "",
+    passwordError: "",
+    checkboxesError: "",
   });
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +57,7 @@ export const SignUp: React.FC = () => {
         setValues({
           ...values,
           [targetName]: targetValue,
-          confirmError: false,
+          confirmError: "",
         });
       }
     } else if (
@@ -101,6 +101,24 @@ export const SignUp: React.FC = () => {
   };
 
   const onCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      values.checkboxes.push(e.target.value);
+      console.log(values.checkboxes);
+    } else if (!e.target.checked) {
+      const index = values.checkboxes.indexOf(e.target.value);
+      values.checkboxes.splice(index, 1);
+    }
+    if (!values.checkboxes.length) {
+      setValues({
+        ...values,
+        checkboxesError: "Minimum 1 checkbox must be marked",
+      });
+    } else if (values.checkboxes.length) {
+      setValues({
+        ...values,
+        checkboxesError: "",
+      });
+    }
   };
   return (
     <div className="form-wrapper">
@@ -177,7 +195,15 @@ export const SignUp: React.FC = () => {
             </div>
           )}
         </div>
-        <button className="btn btn-dark mt-3" type={"submit"}>
+        <button
+          disabled={values.checkboxesError || !values.checkboxes.length ? true : false}
+          className={
+            values.checkboxesError || !values.checkboxes.length
+              ? "btn btn-dark mt-3 disabled-input"
+              : "btn btn-dark mt-3"
+          }
+          type={"submit"}
+        >
           Register
         </button>
         <button className="btn btn-danger mt-3 ms-3" type={"reset"}>
